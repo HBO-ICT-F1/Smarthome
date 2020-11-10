@@ -8,6 +8,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.nhlstenden.smarthome.R
 
+/** Permission required to vibrate the phone */
 const val VIBRATE = "android.permission.VIBRATE"
 
 /**
@@ -17,8 +18,13 @@ const val VIBRATE = "android.permission.VIBRATE"
  * @since 1.0
  */
 class Notification(
+    /** Context used for creating the notification */
     private val context: Context,
+    /** Notification channel name */
     private val channelName: String,
+    /** Notification channel description */
+    channelDescription: String,
+    /** Importance of this notification channel from [NotificationManager] */
     importance: Int = NotificationManager.IMPORTANCE_DEFAULT
 ) {
     private val notificationManagerCompat = NotificationManagerCompat.from(context)
@@ -26,7 +32,7 @@ class Notification(
 
     init {
         val channel = NotificationChannel(channelName, channelName, importance).apply {
-            description = "Channel description"
+            description = channelDescription
         }
 
         // Create channel
