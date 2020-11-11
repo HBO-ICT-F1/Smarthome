@@ -1,8 +1,6 @@
 package com.nhlstenden.smarthome.utils
 
 import androidx.annotation.RequiresPermission
-import com.google.gson.Gson
-import com.nhlstenden.smarthome.utils.serialized.IP
 
 /** Internet permission required for accessing some functions in this util */
 const val INTERNET = "android.permission.INTERNET"
@@ -18,13 +16,14 @@ class Connection {
     companion object {
 
         /**
-         * Gets the current public ip, or null if not connected or found.
-         * Sends a request to <a href="https://www.my-ip.io/">www.my-ip.io</a>
+         * Gets the current public ipv4 address, or null if an exception occurred.
+         * Sends a request to <a href="https://api4.my-ip.io/ip">my-ip.io</a>
+         *
+         * @return the clients public ip, or null if not found.
          */
         @RequiresPermission(INTERNET)
         fun getIp() = try {
-            val contents = java.net.URL("https://api.my-ip.io/ip.json").readText()
-            Gson().fromJson(contents, IP::class.java).address
+            java.net.URL("https://api4.my-ip.io/ip").readText()
         } catch (e: Exception) {
             println("Get public ip failed: ${e.message}")
             null
