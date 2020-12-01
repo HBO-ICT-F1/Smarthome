@@ -11,7 +11,7 @@ const val INTERNET = "android.permission.INTERNET"
  * @author Robert
  * @since 1.0
  */
-class Connection {
+class Connection(val ip: String, val port: Int) {
 
     companion object {
 
