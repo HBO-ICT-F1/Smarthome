@@ -12,7 +12,7 @@ import java.io.File
  * @since 1.0
  */
 class Database(private val database: SQLiteDatabase) {
-    /** Gets the database file */
+    /** The database file */
     private val file = File(database.path)
 
     /**
@@ -38,10 +38,10 @@ class Database(private val database: SQLiteDatabase) {
      *
      * @return true if the query succeeded, false otherwise.
      */
-    fun exec(query: String, callback: ((Cursor) -> Unit)): Boolean {
+    fun exec(query: String, callback: (Cursor) -> Unit): Boolean {
         database.rawQuery(query, null).use {
             return if (it.moveToFirst()) {
-                callback.invoke(it)
+                callback(it)
                 true
             } else {
                 false

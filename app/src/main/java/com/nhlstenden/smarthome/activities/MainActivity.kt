@@ -1,39 +1,27 @@
 package com.nhlstenden.smarthome.activities
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
-import com.google.gson.GsonBuilder
 import com.nhlstenden.smarthome.R
-import com.nhlstenden.smarthome.utils.Connection
-import com.nhlstenden.smarthome.utils.INTERNET
-import java.net.Socket
+import com.nhlstenden.smarthome.connection.Connection
+import com.nhlstenden.smarthome.connection.INTERNET
+import com.nhlstenden.smarthome.connection.packets.PacketLogin
 
-class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
-    val gson = GsonBuilder().setPrettyPrinting().setLenient().create()
+const val IP = "192.168.0.179"
+const val PORT = 80
+
+class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback, View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val button = Button(this)
-        button.setOnClickListener {
-            val thread = Thread {
-                println("Connecting...")
-                val sock = Socket("192.168.0.100", 80)
-                val serialized = Connection("192.168.0.100", 80)
-
-                println("Writing")
-                sock.getOutputStream().write(gson.toJson(serialized).toByteArray())
-                sock.getOutputStream().flush()
-                sock.close()
-                println("Finished")
-            }
-
-            thread.start()
-        }
+        button.setOnClickListener(this)
 
         val layout = findViewById<ConstraintLayout>(R.id.constraintlayout)
         layout.addView(button)
@@ -53,5 +41,22 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         }
 
         println("Permissions accepted")
+    }
+
+    override fun onClick(v: View) {
+        val thread = Thread {
+            println("Connecting...")
+            val connection = Connection.connect(IP, PORT) ?: return@Thread println("Not connected")
+
+            println("Writing")
+            val login = PacketLogin("Key go brrrrrrr")
+            connection.write(login)
+
+            println("Reading")
+            connection.run()
+            println("Finished")
+        }
+
+        thread.start()
     }
 }
