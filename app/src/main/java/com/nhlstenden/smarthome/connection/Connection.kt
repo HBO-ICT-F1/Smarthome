@@ -3,6 +3,7 @@ package com.nhlstenden.smarthome.connection
 import androidx.annotation.RequiresPermission
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
+import com.nhlstenden.smarthome.utils.RSA
 import java.io.BufferedReader
 import java.net.Socket
 import java.net.URL
@@ -21,6 +22,7 @@ const val MY_IP = "https://api4.my-ip.io/ip"
  */
 class Connection private constructor(private val socket: Socket) {
     private val callbacks = mutableMapOf<PacketType, MutableList<(Packet) -> Unit>>()
+    private var rsa: RSA? = null
 
     /** Gets wether the [Socket] is currently connected */
     val connected get() = socket.isConnected
@@ -30,10 +32,10 @@ class Connection private constructor(private val socket: Socket) {
         private val gson = Gson()
 
         /**
-         * Gets the current public ipv4 address, or null if an exception occurred.
+         * Gets the current public ipv4 address, or null if an exception occurred
          * Sends a request to <a href="https://api4.my-ip.io/ip">my-ip.io</a>
          *
-         * @return the clients public ip, or null if not found.
+         * @return the clients public ip, or null if not found
          */
         @RequiresPermission(INTERNET)
         fun getIp() = try {
@@ -75,10 +77,12 @@ class Connection private constructor(private val socket: Socket) {
         while (true) {
             try {
                 // Read 1 packet
+                // TODO: Fix crashing issue with long messages(eg. large encryption keys)
                 val line = reader.readLine() ?: continue
+                val json = rsa?.decrypt(line) ?: line
 
                 // Get base packet from json
-                val base = gson.fromJson(line, Packet::class.java)
+                val base = gson.fromJson(json, Packet::class.java)
                 val type = PacketType.parse(base.type)
 
                 // Check if packet was recognized
@@ -88,7 +92,7 @@ class Connection private constructor(private val socket: Socket) {
                 }
 
                 // Get actual packet from json
-                val packet = gson.fromJson(line, type.clazz)
+                val packet = gson.fromJson(json, type.clazz)
 
                 // Invoke callbacks
                 callbacks[type]?.forEach { it(packet as Packet) }
@@ -100,10 +104,20 @@ class Connection private constructor(private val socket: Socket) {
         }
     }
 
+    /**
+     * Sets the [RSA] instance for encrypting and decrypting packets
+     * Set to null to disable
+     */
+    fun setEncryption(rsa: RSA?) {
+        this.rsa = rsa
+    }
+
     /** Sends the specified [packet] to the connected device */
     fun write(packet: Packet) {
         // Serialize packet and send
-        write(gson.toJson(packet))
+        val json = gson.toJson(packet)
+        val encrypted = rsa?.encrypt(json) ?: json
+        write(encrypted)
     }
 
     /** Writes the specified [input] to the connected device */

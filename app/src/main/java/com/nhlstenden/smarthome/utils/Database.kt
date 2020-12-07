@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import java.io.File
 
 /**
- * Database util for storing in and loading data from an SQLite database easily.
+ * Database util for storing in and loading data from an SQLite database easily
  *
  * @author Robert
  * @since 1.0
@@ -18,7 +18,7 @@ class Database(private val database: SQLiteDatabase) {
     /**
      * Executes an SQL query
      *
-     * @return true if the query succeeded, false otherwise.
+     * @return true if the query succeeded, false otherwise
      */
     fun exec(query: String): Boolean {
         database.apply {
@@ -34,9 +34,9 @@ class Database(private val database: SQLiteDatabase) {
     }
 
     /**
-     * Executes an SQL query, and handles the returned data in the callback runnable.
+     * Executes an SQL query, and handles the returned data in the callback runnable
      *
-     * @return true if the query succeeded, false otherwise.
+     * @return true if the query succeeded, false otherwise
      */
     fun exec(query: String, callback: (Cursor) -> Unit): Boolean {
         database.rawQuery(query, null).use {
