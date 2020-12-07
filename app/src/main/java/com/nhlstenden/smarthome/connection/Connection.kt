@@ -2,6 +2,7 @@ package com.nhlstenden.smarthome.connection
 
 import androidx.annotation.RequiresPermission
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import java.io.BufferedReader
 import java.net.Socket
 import java.net.URL
@@ -13,12 +14,16 @@ const val INTERNET = "android.permission.INTERNET"
 const val MY_IP = "https://api4.my-ip.io/ip"
 
 /**
- * Connection util for connecting to the remote device, and for other useful functions related to connections
+ * Connection util for connecting to remote devices, and sending/receiving data
  *
  * @author Robert
  * @since 1.0
  */
 class Connection private constructor(private val socket: Socket) {
+    private val callbacks = mutableMapOf<PacketType, MutableList<(Packet) -> Unit>>()
+
+    /** Gets wether the [Socket] is currently connected */
+    val connected get() = socket.isConnected
 
     companion object {
         /** [Gson] instance for serializing and deserializing [Packet]s */
@@ -70,15 +75,27 @@ class Connection private constructor(private val socket: Socket) {
         while (true) {
             try {
                 // Read 1 packet
-                val line = reader.readLine()
-                line ?: continue
+                val line = reader.readLine() ?: continue
 
-                // Get packet from json
-                // TODO: Find superclass of packets and handle callbacks
-                val packet = gson.fromJson(line, Packet::class.java)
-                println("Received packet [$packet][$line]")
+                // Get base packet from json
+                val base = gson.fromJson(line, Packet::class.java)
+                val type = PacketType.parse(base.type)
+
+                // Check if packet was recognized
+                if (type == null) {
+                    println("Received invalid packet type: ${base.type}")
+                    continue
+                }
+
+                // Get actual packet from json
+                val packet = gson.fromJson(line, type.clazz)
+
+                // Invoke callbacks
+                callbacks[type]?.forEach { it(packet as Packet) }
+            } catch (e: JsonSyntaxException) {
+                println("Failed to deserialize packet: ${e.message}")
             } catch (e: Exception) {
-                println("Failed to read packet: ${e.message}")
+                e.printStackTrace()
             }
         }
     }
@@ -101,12 +118,15 @@ class Connection private constructor(private val socket: Socket) {
     }
 
     /** Registers a [callback] for when a specific [Packet] was received */
-    fun <T : Packet> on(callback: (Connection, T) -> Unit) {
-        // TODO: Register callback
-    }
+    fun <T : Packet> register(type: PacketType, callback: (T) -> Unit) {
+        try {
+            // Initialize list of callbacks if not already initialized
+            callbacks.putIfAbsent(type, mutableListOf())
 
-    /** Registers a [callback] for when a specific [Packet] was received */
-    fun <T : Packet> on(callback: (T) -> Unit) {
-        // TODO: Register callback
+            // Save callback
+            callbacks[type]!!.add(callback as (Packet) -> Unit)
+        } catch (e: ClassCastException) {
+            println("Invalid callback: ${e.message}")
+        }
     }
 }
