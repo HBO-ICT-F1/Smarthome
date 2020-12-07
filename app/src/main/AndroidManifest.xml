@@ -4,15 +4,15 @@
 
     <!-- Required permissions for the app to work -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"
         android:allowBackup="false"
-        android:appCategory="maps"
         android:hasFragileUserData="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/AppTheme">
+        android:roundIcon="@mipmap/ic_launcher_round">
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name">
