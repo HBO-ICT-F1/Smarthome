@@ -48,9 +48,9 @@ class Connection private constructor(private val socket: Socket) {
         }
 
         /**
-         * Opens a [Connection] to the remote [ip]:[port] address.
+         * Opens a [Connection] to the remote [ip]:[port] address
          *
-         * @return the connection that was established, or null if an exception occurred.
+         * @return the connection that was established, or null if an exception occurred
          */
         @RequiresPermission(INTERNET)
         fun connect(ip: String, port: Int) = try {
@@ -69,7 +69,7 @@ class Connection private constructor(private val socket: Socket) {
         }
     }
 
-    /** Runs the connection input handler, and blocks the current thread */
+    /** Runs the connection input handler and blocks the current thread */
     fun run() {
         val stream = socket.getInputStream()
         val reader = BufferedReader(stream.reader())
@@ -104,10 +104,7 @@ class Connection private constructor(private val socket: Socket) {
         }
     }
 
-    /**
-     * Sets the [RSA] instance for encrypting and decrypting packets
-     * Set to null to disable
-     */
+    /** Sets the [RSA] instance used for encrypting and decrypting packets, or disabled if [rsa] is null */
     fun setEncryption(rsa: RSA?) {
         this.rsa = rsa
     }

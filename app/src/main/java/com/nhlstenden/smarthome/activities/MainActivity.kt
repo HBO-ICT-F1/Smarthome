@@ -6,10 +6,6 @@ import androidx.core.app.ActivityCompat
 import com.nhlstenden.smarthome.R
 import com.nhlstenden.smarthome.connection.INTERNET
 
-// TODO: Replace with setting in app
-const val IP = "192.168.0.179"
-const val PORT = 80
-
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
