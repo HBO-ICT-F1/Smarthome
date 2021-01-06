@@ -12,6 +12,7 @@
         android:allowBackup="false"
         android:hasFragileUserData="true"
         android:icon="@mipmap/ic_launcher"
+        android:networkSecurityConfig="@xml/network_config"
         android:roundIcon="@mipmap/ic_launcher_round">
         <activity
             android:name=".activities.MainActivity"
