@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
 
-    <!-- "Mark Favorite", should appear as action button if possible -->
+    <!-- Button used for adding a new arduino -->
     <item
         android:id="@+id/add_arduino"
         android:icon="@drawable/ic_baseline_add_24"
