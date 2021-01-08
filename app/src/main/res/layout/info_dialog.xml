@@ -17,7 +17,6 @@
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Arduino"
         android:textSize="16sp" />
 
     <TextView
@@ -33,7 +32,6 @@
         android:id="@+id/ip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="127.0.0.1"
         android:textSize="16sp" />
 
     <TextView
@@ -49,7 +47,6 @@
         android:id="@+id/temp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="30 °C"
         android:textSize="16sp" />
 
     <TextView
@@ -65,7 +62,6 @@
         android:id="@+id/humidity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="40%"
         android:textSize="16sp" />
 
     <TextView
@@ -81,6 +77,12 @@
         android:id="@+id/alarm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="actief"
         android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/toggle_alarm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20sp"
+        android:text="@string/btn_toggle_alarm" />
 </LinearLayout>

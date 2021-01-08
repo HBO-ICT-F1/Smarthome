@@ -62,6 +62,10 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         if (item.itemId == R.id.add_arduino) {
             val addDialog = AddArduinoDialogBinding.inflate(layoutInflater)
             val alertDialog = AlertDialog.Builder(this@MainActivity)
+            addDialog.submitButton.setOnClickListener {
+                // TODO: Add DB save
+                println("add arduino")
+            }
             alertDialog.setView(addDialog.root)
             alertDialog.create().show()
             return true
@@ -77,6 +81,15 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             setOnClickListener {
                 // TODO: Use data of arduino's
                 val infoDialog = InfoDialogBinding.inflate(layoutInflater)
+                infoDialog.name.text = "Arduino"
+                infoDialog.ip.text = "127.0.0.1"
+                infoDialog.temp.text = "30 °C"
+                infoDialog.humidity.text = "40%"
+                infoDialog.alarm.text = "actief"
+                infoDialog.toggleAlarm.setOnClickListener {
+                    // TODO: Add api call to toggle alarm
+                    println("toggle alarm")
+                }
                 val alertDialog = AlertDialog.Builder(this@MainActivity)
                 alertDialog.setView(infoDialog.root)
                 alertDialog.create().show()

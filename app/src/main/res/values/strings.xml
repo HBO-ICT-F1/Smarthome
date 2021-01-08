@@ -7,4 +7,5 @@
     <string name="humidity">Lucht vochtigheid</string>
     <string name="alarm_status">Alarm status</string>
     <string name="btn_submit">Opslaan</string>
+    <string name="btn_toggle_alarm">Toggle alarm</string>
 </resources>
