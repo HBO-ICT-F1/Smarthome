@@ -22,7 +22,7 @@
         android:layout_marginTop="?attr/actionBarSize">
 
         <LinearLayout
-            android:id="@+id/linear_layout"
+            android:id="@+id/layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
