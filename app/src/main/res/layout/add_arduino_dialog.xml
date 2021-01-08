@@ -50,13 +50,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:labelFor="@id/pair_code"
-        android:text="@string/pair_code"
+        android:labelFor="@id/port"
+        android:text="@string/port"
         android:textSize="16sp"
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/pair_code"
+        android:id="@+id/port"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:digits="0123456789"

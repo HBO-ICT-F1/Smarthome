@@ -6,8 +6,8 @@ package com.nhlstenden.smarthome.utils
  * @param name The name of the remote device
  * @param ip The ip of the Arduino
  * @param port The port to connect to for connections
- * @param key The arduino's public key
+ * @param code The arduino's public key
  * @author Robert
  * @since 1.0
  */
-data class Arduino(val name: String, val ip: String, val port: Int, val key: String)
+data class Arduino(val name: String, val ip: String, val port: Int, val code: Int)

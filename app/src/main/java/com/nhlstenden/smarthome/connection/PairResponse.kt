@@ -8,4 +8,4 @@ import com.nhlstenden.smarthome.utils.Arduino
  * @author Robert
  * @since 1.0
  */
-data class PairResponse(val key: String)
+data class PairResponse(val code: Int)
