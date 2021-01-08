@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Smarthome</string>
+    <string name="ip">IP</string>
+    <string name="name">Naam</string>
+    <string name="pair_code">Koppel code</string>
+    <string name="temperature">Temperatuur</string>
+    <string name="humidity">Lucht vochtigheid</string>
+    <string name="alarm_status">Alarm status</string>
+    <string name="btn_submit">Opslaan</string>
+    <string name="btn_toggle_alarm">Toggle alarm</string>
 </resources>
