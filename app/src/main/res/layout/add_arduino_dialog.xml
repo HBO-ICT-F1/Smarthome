@@ -13,12 +13,16 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
-    <TextView
+    <EditText
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Arduino"
-        android:textSize="16sp" />
+        android:ems="10"
+        android:inputType="text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:autofillHints="" />
+
 
     <TextView
         android:layout_width="match_parent"
@@ -29,58 +33,45 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
-    <TextView
+    <EditText
         android:id="@+id/ip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="127.0.0.1"
-        android:textSize="16sp" />
+        android:digits="0123456789."
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="15"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:autofillHints="" />
+
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:labelFor="@id/temp"
-        android:text="@string/temperature"
+        android:labelFor="@id/pair_code"
+        android:text="@string/pair_code"
         android:textSize="16sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/temp"
+    <EditText
+        android:id="@+id/pair_code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="30 °C"
-        android:textSize="16sp" />
+        android:digits="0123456789"
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="4"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:autofillHints="" />
 
-    <TextView
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:labelFor="@id/humidity"
-        android:text="@string/humidity"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/humidity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="40%"
-        android:textSize="16sp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:labelFor="@id/alarm"
-        android:text="@string/alarm_status"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/alarm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="actief"
-        android:textSize="16sp" />
+        android:text="@string/btn_submit" />
 </LinearLayout>

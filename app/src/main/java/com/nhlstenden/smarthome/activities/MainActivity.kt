@@ -3,12 +3,14 @@ package com.nhlstenden.smarthome.activities
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.nhlstenden.smarthome.R
 import com.nhlstenden.smarthome.connection.INTERNET
 import com.nhlstenden.smarthome.databinding.ActivityMainBinding
+import com.nhlstenden.smarthome.databinding.AddArduinoDialogBinding
 import com.nhlstenden.smarthome.databinding.InfoDialogBinding
 
 /**
@@ -54,6 +56,18 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main_menu, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.add_arduino) {
+            val addDialog = AddArduinoDialogBinding.inflate(layoutInflater)
+            val alertDialog = AlertDialog.Builder(this@MainActivity)
+            alertDialog.setView(addDialog.root)
+            alertDialog.create().show()
+            return true
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     /** Adds an Arduino entry to the layout */
