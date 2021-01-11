@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">Smarthome</string>
     <string name="ip">IP</string>
-    <string name="name">Naam</string>
+    <string name="name">Name</string>
     <string name="port">Port</string>
-    <string name="temperature">Temperatuur</string>
-    <string name="humidity">Lucht vochtigheid</string>
+    <string name="temperature">Temperature</string>
+    <string name="humidity">Humidity</string>
     <string name="alarm_status">Alarm status</string>
-    <string name="btn_submit">Opslaan</string>
+    <string name="add_device">Add device</string>
     <string name="btn_toggle_alarm">Toggle alarm</string>
 </resources>
