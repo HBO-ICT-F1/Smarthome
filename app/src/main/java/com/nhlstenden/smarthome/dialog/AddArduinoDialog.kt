@@ -1,10 +1,11 @@
 package com.nhlstenden.smarthome.dialog
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import com.nhlstenden.smarthome.activities.MainActivity
+import com.nhlstenden.smarthome.R
 import com.nhlstenden.smarthome.connection.Connection
 import com.nhlstenden.smarthome.databinding.AddArduinoDialogBinding
 import com.nhlstenden.smarthome.utils.Arduino
@@ -23,22 +24,25 @@ private const val IP_REGEX = "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\$"
  * @since 1.0
  */
 class AddArduinoDialog(
-    context: MainActivity,
+    context: Context,
     private val database: Database,
     private val onSuccess: (Arduino) -> Unit,
     private val onError: (String) -> Unit
 ) :
     AlertDialog(context), View.OnClickListener {
     /** Binding for this dialog */
-    private val binding by lazy { AddArduinoDialogBinding.inflate(context.layoutInflater) }
+    private val binding by lazy { AddArduinoDialogBinding.inflate(layoutInflater) }
 
     /** Regex for matching ip addresses */
     private val regex = Regex(IP_REGEX)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
         setContentView(binding.root)
+
+        // Clear window flags to enable focussing
+        val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
+        window?.clearFlags(flags)
 
         // Register click listener
         binding.confirmButton.setOnClickListener(this)
@@ -58,8 +62,9 @@ class AddArduinoDialog(
 
         thread(true) {
             // Send pair request
-            val response = Connection.pair(ip, port!!) ?: return@thread onError("Failed to connect to device")
-            if (response.code == 0) return@thread onError("Failed to pair with device")
+            val response = Connection.pair(ip, port!!)
+                ?: return@thread onError(context.getString(R.string.connect_failed))
+            if (response.code == 0) return@thread onError(context.getString(R.string.pair_failed))
 
             // Insert data into database
             database.exec("INSERT INTO `devices` (`name`, `ip`, `port`, `code`) VALUES ('$name', '$ip', '$port', '${response.code}')")
@@ -74,25 +79,34 @@ class AddArduinoDialog(
     private fun validate(name: String, ip: String, port: Int?): Boolean {
         // Check if name is valid
         if (name.isEmpty()) {
-            binding.name.error = "Name is required"
+            binding.name.error = context.getString(R.string.name_required)
             return false
         }
 
         // Check if ip address is valid
         if (ip.isEmpty() || !regex.matches(ip)) {
-            binding.ip.error = "Invalid ip"
+            binding.ip.error = context.getString(R.string.invalid_ip)
             return false
         }
 
         // Check if input port is valid
         if (port == null || port < 0 || port > 65535) {
-            binding.port.error = "Invalid port"
+            binding.port.error = context.getString(R.string.invalid_port)
             return false
         }
 
         // Check if data is already in the database
-        return !database.exec("SELECT * FROM `devices` WHERE `name`='$name'") {
-            binding.name.error = "Name already in use"
+        return !database.exec("SELECT * FROM `devices` WHERE `name`='$name' OR `ip`='$ip' AND `port`='$port'") {
+            // Check if name is already taken
+            if (it.getString(0) == name) {
+                binding.name.error = context.getString(R.string.name_taken)
+            }
+
+            // Check if ip and port are already taken
+            if (it.getString(1) == ip && it.getInt(2) == port) {
+                binding.ip.error = context.getString(R.string.address_taken)
+                binding.port.error = context.getString(R.string.address_taken)
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.nhlstenden.smarthome.activities
 
-import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.Menu
@@ -12,11 +11,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 import com.nhlstenden.smarthome.R
-import com.nhlstenden.smarthome.connection.Connection
 import com.nhlstenden.smarthome.connection.INTERNET
 import com.nhlstenden.smarthome.databinding.ActivityMainBinding
-import com.nhlstenden.smarthome.databinding.InfoDialogBinding
 import com.nhlstenden.smarthome.dialog.AddArduinoDialog
+import com.nhlstenden.smarthome.dialog.InfoDialog
 import com.nhlstenden.smarthome.utils.Arduino
 import com.nhlstenden.smarthome.utils.Database
 
@@ -25,7 +23,7 @@ private const val DATABASE_NAME = "Smarthome.db"
 
 /** Query used for creating the devices table */
 private const val CREATE_TABLE =
-    "CREATE TABLE IF NOT EXISTS `devices` (`name` VARCHAR(255) NOT NULL,  `ip` VARCHAR(15) NOT NULL, `port` INT(5) NOT NULL, `code` INT(4) NOT NULL)"
+    "CREATE TABLE IF NOT EXISTS `devices`(`name` VARCHAR(255) NOT NULL, `ip` VARCHAR(15) NOT NULL, `port` INT(5) NOT NULL, `code` INT(4) NOT NULL)"
 
 /**
  * Smarthome app main activity
@@ -119,28 +117,11 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         // Create buttons for all arduino's
         val button = Button(this).apply {
             setOnClickListener {
-                val infoDialog = InfoDialogBinding.inflate(layoutInflater).apply {
-                    name.text = device.name
-                    ip.text = device.ip
-                }
-
-                val dialog = AlertDialog.Builder(this@MainActivity).create()
-                dialog.setView(infoDialog.root)
-                dialog.show()
-
-                infoDialog.toggleAlarm.setOnClickListener {
-                    Connection.request(device, "buzzer/code=${device.code}") {
-                        infoDialog.humidity.text = it.dth.humidity
-                        infoDialog.temp.text = it.dth.temperature
-                        infoDialog.alarm.text = if (it.alarm) "Aan" else "Uit"
-                        dialog.setView(infoDialog.root)
-                    }
-
-                }
+                val infoDialog = InfoDialog(this@MainActivity, device)
+                infoDialog.show()
             }
 
             text = device.name
-            height = 160
         }
 
         // Add button to layout

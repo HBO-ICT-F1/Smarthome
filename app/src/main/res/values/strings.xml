@@ -1,11 +1,25 @@
 <resources>
     <string name="app_name">Smarthome</string>
-    <string name="ip">IP</string>
     <string name="name">Name</string>
+    <string name="ip">IP</string>
     <string name="port">Port</string>
+    <string name="address">Address</string>
+
+    <!-- Add device dialog-->
+    <string name="add_device">Add device</string>
+    <string name="name_required">Name is required</string>
+    <string name="connect_failed">Failed to connect to device</string>
+    <string name="pair_failed">Failed to pair with device</string>
+    <string name="invalid_ip">Invalid ip</string>
+    <string name="invalid_port">Invalid port</string>
+    <string name="name_taken">Device name already in use</string>
+    <string name="address_taken">Device ip and port already in use</string>
+
+    <!-- Info dialog -->
     <string name="temperature">Temperature</string>
     <string name="humidity">Humidity</string>
     <string name="alarm_status">Alarm status</string>
-    <string name="add_device">Add device</string>
-    <string name="btn_toggle_alarm">Toggle alarm</string>
+    <string name="toggle_alarm">Toggle alarm</string>
+    <string name="alarm_on">On</string>
+    <string name="alarm_off">Off</string>
 </resources>
