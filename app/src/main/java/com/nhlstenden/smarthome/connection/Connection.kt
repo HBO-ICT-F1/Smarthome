@@ -74,13 +74,11 @@ object Connection {
     private fun read(url: String) = try {
         // Connect to website and read page contents
         URL(url).readText()
-    } catch (e: IOException) {
-        // Print error message
-        println("Failed to read contents from ($url)")
-        null
     } catch (e: MalformedURLException) {
         // Print error message
         println("Invalid url ($url)")
+        null
+    } catch (e: IOException) {
         null
     }
 }

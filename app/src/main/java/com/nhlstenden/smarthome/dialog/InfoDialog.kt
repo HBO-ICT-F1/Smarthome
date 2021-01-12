@@ -17,7 +17,7 @@ import com.nhlstenden.smarthome.utils.Arduino
  * @author Robert
  * @since 1.0
  */
-class InfoDialog(context: Context, private val device: Arduino) : AlertDialog(context), View.OnClickListener {
+class InfoDialog(context: Context, private val arduino: Arduino) : AlertDialog(context), View.OnClickListener {
     /** Binding for this activity */
     private val binding by lazy { InfoDialogBinding.inflate(layoutInflater) }
 
@@ -30,9 +30,7 @@ class InfoDialog(context: Context, private val device: Arduino) : AlertDialog(co
             toggleAlarm.setOnClickListener(this@InfoDialog)
 
             // Update device data
-            name.text = device.name
-            @SuppressLint("SetTextI18n")
-            address.text = "${device.ip}:${device.port}"
+            refresh()
         }
     }
 
@@ -41,15 +39,36 @@ class InfoDialog(context: Context, private val device: Arduino) : AlertDialog(co
         if (v.id != binding.toggleAlarm.id) return
 
         // Send request to buzzer toggle endpoint and update device data
-        Connection.request(device, "buzzer/code=${device.code}") {
-            binding.apply {
-                humidity.text = it.dth.humidity
-                temp.text = it.dth.temperature
+        Connection.request(arduino, "?code=${arduino.code}&buzzer") {
+            // Update arduino data
+            arduino.dth = it.dth
+            arduino.alarm = it.alarm == 1
 
-                val id = if (it.alarm) R.string.alarm_on else R.string.alarm_off
-                alarm.text = context.getString(id)
+            binding.apply {
+                // Update device data
+                refresh()
                 setView(root)
             }
+        }
+    }
+
+    /** Refresh [Arduino] data */
+    private fun refresh() {
+        binding.apply {
+            // Update device data
+            name.text = arduino.name
+            @SuppressLint("SetTextI18n")
+            address.text = "${arduino.ip}:${arduino.port}"
+
+            // Check if DTH sensor is ready to update
+            if (arduino.dth?.ready == 1) {
+                humidity.text = arduino.dth?.humidity.toString()
+                temp.text = arduino.dth?.temperature.toString()
+            }
+
+            // Set alarm status
+            val id = if (arduino.alarm == true) R.string.alarm_on else R.string.alarm_off
+            alarm.text = context.getString(id)
         }
     }
 }

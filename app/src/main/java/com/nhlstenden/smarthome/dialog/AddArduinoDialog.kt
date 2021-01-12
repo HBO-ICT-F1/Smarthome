@@ -6,17 +6,17 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import com.nhlstenden.smarthome.R
+import com.nhlstenden.smarthome.Smarthome
 import com.nhlstenden.smarthome.connection.Connection
 import com.nhlstenden.smarthome.databinding.AddArduinoDialogBinding
 import com.nhlstenden.smarthome.utils.Arduino
-import com.nhlstenden.smarthome.utils.Database
 import kotlin.concurrent.thread
 
 /** Regular expression used for matching ip addresses */
-private const val IP_REGEX = "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\$"
+private const val IP_REGEX = "^([0-9]{1,3}\\.){3}[0-9]{1,3}\$"
 
 /**
- * Dialog used for adding an arduino to the application
+ * Dialog used for adding an [Arduino] to the application
  *
  * @author Kevin
  * @author Robert
@@ -25,7 +25,7 @@ private const val IP_REGEX = "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\$"
  */
 class AddArduinoDialog(
     context: Context,
-    private val database: Database,
+    private val smarthome: Smarthome,
     private val onSuccess: (Arduino) -> Unit,
     private val onError: (String) -> Unit
 ) :
@@ -66,12 +66,13 @@ class AddArduinoDialog(
                 ?: return@thread onError(context.getString(R.string.connect_failed))
             if (response.code == 0) return@thread onError(context.getString(R.string.pair_failed))
 
-            // Insert data into database
-            database.exec("INSERT INTO `devices` (`name`, `ip`, `port`, `code`) VALUES ('$name', '$ip', '$port', '${response.code}')")
-            dismiss()
+            // Create arduino instance
+            val arduino = Arduino(name, ip, port, response.code, null, null)
 
-            // Call onSuccess
-            onSuccess(Arduino(name, ip, port, 234))
+            // Insert data into database, call onSuccess and dismiss
+            smarthome.add(arduino)
+            onSuccess(arduino)
+            dismiss()
         }
     }
 
@@ -95,18 +96,19 @@ class AddArduinoDialog(
             return false
         }
 
-        // Check if data is already in the database
-        return !database.exec("SELECT * FROM `devices` WHERE `name`='$name' OR `ip`='$ip' AND `port`='$port'") {
-            // Check if name is already taken
-            if (it.getString(0) == name) {
-                binding.name.error = context.getString(R.string.name_taken)
-            }
+        // Check if a duplicate exists
+        val duplicate = smarthome.arduinos.find { it.name == name || it.ip == ip && it.port == port } ?: return true
 
-            // Check if ip and port are already taken
-            if (it.getString(1) == ip && it.getInt(2) == port) {
-                binding.ip.error = context.getString(R.string.address_taken)
-                binding.port.error = context.getString(R.string.address_taken)
-            }
+        // Set error message if duplicate was found
+        if (duplicate.name == name) {
+            // Set error message for name field
+            binding.name.error = context.getString(R.string.name_taken)
+        } else {
+            // Set error message for ip and port fields
+            binding.ip.error = context.getString(R.string.address_taken)
+            binding.port.error = context.getString(R.string.address_taken)
         }
+
+        return false
     }
 }

@@ -1,5 +1,6 @@
 package com.nhlstenden.smarthome.connection
 
+import com.google.gson.annotations.SerializedName
 import com.nhlstenden.smarthome.utils.Arduino
 
 /**
@@ -8,4 +9,4 @@ import com.nhlstenden.smarthome.utils.Arduino
  * @author Robert
  * @since 1.0
  */
-data class Response(val dth: DTH, val alarm: Boolean)
+data class Response(val dth: DTH, @SerializedName("buzzer") val alarm: Int)

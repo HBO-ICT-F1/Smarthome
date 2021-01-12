@@ -1,29 +1,24 @@
 package com.nhlstenden.smarthome.activities
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.database.getIntOrNull
-import androidx.core.database.getStringOrNull
 import com.nhlstenden.smarthome.R
+import com.nhlstenden.smarthome.Smarthome
 import com.nhlstenden.smarthome.connection.INTERNET
 import com.nhlstenden.smarthome.databinding.ActivityMainBinding
 import com.nhlstenden.smarthome.dialog.AddArduinoDialog
 import com.nhlstenden.smarthome.dialog.InfoDialog
 import com.nhlstenden.smarthome.utils.Arduino
-import com.nhlstenden.smarthome.utils.Database
-
-/** Database file name */
-private const val DATABASE_NAME = "Smarthome.db"
-
-/** Query used for creating the devices table */
-private const val CREATE_TABLE =
-    "CREATE TABLE IF NOT EXISTS `devices`(`name` VARCHAR(255) NOT NULL, `ip` VARCHAR(15) NOT NULL, `port` INT(5) NOT NULL, `code` INT(4) NOT NULL)"
 
 /**
  * Smarthome app main activity
@@ -33,21 +28,12 @@ private const val CREATE_TABLE =
  * @author Rutger
  * @since 1.0
  */
-class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
+class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback, ServiceConnection {
     /** Binding for this activity */
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    /** SQLite database used for saving arduino's */
-    private val database by lazy {
-        // Open/Create database
-        val database = Database(openOrCreateDatabase(DATABASE_NAME, Context.MODE_PRIVATE, null))
-
-        // Create devices table
-        database.exec(CREATE_TABLE)
-
-        // Return database
-        database
-    }
+    /** [Smarthome] service binder */
+    private var service: Smarthome? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,18 +58,9 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             return
         }
 
-        // Load Arduino's from a database
-        database.exec("SELECT * FROM `devices`") {
-            do {
-                // Get data from database
-                val name = it.getStringOrNull(0) ?: continue
-                val ip = it.getStringOrNull(1) ?: continue
-                val port = it.getIntOrNull(2) ?: continue
-                val code = it.getIntOrNull(3) ?: continue
-
-                // Add arduino to layout
-                addArduino(Arduino(name, ip, port, code))
-            } while (it.moveToNext())
+        // Bind to Smarthome service
+        Intent(this, Smarthome::class.java).also { intent ->
+            bindService(intent, this@MainActivity, Context.BIND_AUTO_CREATE)
         }
     }
 
@@ -104,7 +81,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             }
 
             // Create dialog and show
-            val dialog = AddArduinoDialog(this, database, onSuccess, onError)
+            val dialog = AddArduinoDialog(this, service!!, onSuccess, onError)
             dialog.show()
             return true
         }
@@ -126,5 +103,23 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         // Add button to layout
         binding.layout.addView(button)
+    }
+
+    override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+        // Save service instance
+        service = (binder as Smarthome.Binder).service
+        println("Service connected")
+
+        // Make sure the database is loaded
+        service?.init() ?: return println("Failed to load database")
+
+        // Load saved arduinos
+        val arduinos = service!!.arduinos
+        arduinos.forEach(::addArduino)
+        println("Loaded ${arduinos.size} Arduino's")
+    }
+
+    override fun onServiceDisconnected(name: ComponentName?) {
+        println("Service disconnected")
     }
 }
