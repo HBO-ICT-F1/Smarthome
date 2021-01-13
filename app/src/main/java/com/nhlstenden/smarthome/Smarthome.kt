@@ -60,21 +60,19 @@ class Smarthome : Service(), Runnable {
 
     override fun run() {
         println("Started update thread")
+        Thread.sleep(100L)
 
         while (true) {
-            // Wait 30 seconds between refreshing all Arduino's
-            Thread.sleep(30000)
             println("Updating Arduino's...")
 
             for (arduino in arduinos) {
                 // Send request for updating Arduino data
                 Connection.request(arduino, "?code=${arduino.code}") {
                     // Update Arduino data
-                    arduino.dth = it.dth
-                    arduino.alarm = it.alarm == 1
+                    arduino.last = it
 
                     // Show notification
-                    if (arduino.alarm == true) {
+                    if (it.buzzerStatus == 1) {
                         notification.notify(
                             "Alarm set off!",
                             "The alarm on '${arduino.name}' was set off",
@@ -84,6 +82,8 @@ class Smarthome : Service(), Runnable {
                 }
             }
 
+            // Wait 30 seconds between refreshing all Arduino's
+            Thread.sleep(10000) // TODO: Set to 30000
             println("Finished updating Arduino's")
         }
     }
@@ -95,6 +95,18 @@ class Smarthome : Service(), Runnable {
 
         // Save Arduino to database
         database.exec("INSERT INTO `devices` (`name`, `ip`, `port`, `code`) VALUES ('${arduino.name}', '${arduino.ip}', '${arduino.port}', '${arduino.code}')")
+    }
+
+    /** Used to delete an [Arduino] from the database */
+    fun remove(arduino: Arduino) {
+        // Remove from list
+        arduinos.minusAssign(arduino)
+
+        // Delete from database
+        database.exec("DELETE FROM `devices` WHERE `name`='${arduino.name}' AND `ip`='${arduino.ip}' AND `port`='${arduino.port}'")
+
+        // Unpair device
+        Connection.request(arduino, "unpair") {}
     }
 
     /** Creates tables and loads data in the specified [Database] */
@@ -119,7 +131,8 @@ class Smarthome : Service(), Runnable {
                 val code = it.getIntOrNull(3) ?: continue
 
                 // Create Arduino instance and save to list
-                arduinos.plusAssign(Arduino(name, ip, port, code, null, null))
+                val arduino = Arduino(name, ip, port, code, null)
+                arduinos.plusAssign(arduino)
             } while (it.moveToNext())
         }
     }

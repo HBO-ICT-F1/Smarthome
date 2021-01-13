@@ -20,9 +20,8 @@
     <string name="humidity">Humidity</string>
     <string name="alarm_status">Alarm status</string>
     <string name="light">Brightness</string>
-    <string name="toggle_alarm">Toggle buzzer</string>
-    <string name="alarm_on">On</string>
-    <string name="alarm_off">Off</string>
-    <string name="arm_alarm">Toggle alarm</string>
+    <string name="test_buzzer">Test buzzer</string>
+    <string name="toggle_alarm">Toggle alarm</string>
     <string name="delete_device">Delete</string>
+    <string name="not_set">-</string>
 </resources>

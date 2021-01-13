@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="20dp"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:padding="20dp">
 
+    <!-- Device name label -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:labelFor="@id/name"
         android:text="@string/name"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
+    <!-- Device name value -->
     <TextView
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp" />
+        android:textSize="16sp"/>
 
+    <!-- Device address label -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,29 +29,34 @@
         android:labelFor="@id/address"
         android:text="@string/address"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
+    <!-- Device address value -->
     <TextView
         android:id="@+id/address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp" />
+        android:textSize="16sp"/>
 
+    <!-- Device temperature label -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:labelFor="@id/temp"
+        android:labelFor="@id/temperature"
         android:text="@string/temperature"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
+    <!-- Device temperature value -->
     <TextView
-        android:id="@+id/temp"
+        android:id="@+id/temperature"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp" />
+        android:text="@string/not_set"
+        android:textSize="16sp"/>
 
+    <!-- Device humidity label -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,29 +64,17 @@
         android:labelFor="@id/humidity"
         android:text="@string/humidity"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
+    <!-- Device humidity value -->
     <TextView
         android:id="@+id/humidity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp" />
+        android:text="@string/not_set"
+        android:textSize="16sp"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:labelFor="@id/alarm"
-        android:text="@string/alarm_status"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/alarm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp" />
-
+    <!-- Device brightness field -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -86,32 +82,36 @@
         android:labelFor="@id/light"
         android:text="@string/light"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
+    <!-- Device brightness value -->
     <TextView
         android:id="@+id/light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp" />
+        android:textSize="16sp"/>
 
+    <!-- Device buzzer toggle button -->
+    <Button
+        android:id="@+id/test_buzzer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20sp"
+        android:text="@string/test_buzzer"/>
+
+    <!-- Device alarm toggle button -->
     <Button
         android:id="@+id/toggle_alarm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20sp"
-        android:text="@string/toggle_alarm" />
+        android:text="@string/toggle_alarm"/>
 
-    <Button
-        android:id="@+id/arm_alarm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20sp"
-        android:text="@string/arm_alarm" />
-
+    <!-- Device delete/unpair button -->
     <Button
         android:id="@+id/delete_device"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20sp"
-        android:text="@string/delete_device" />
+        android:text="@string/delete_device"/>
 </LinearLayout>

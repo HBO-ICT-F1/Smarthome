@@ -17,7 +17,8 @@ import com.nhlstenden.smarthome.utils.Arduino
  * @author Robert
  * @since 1.0
  */
-class InfoDialog(context: Context, private val arduino: Arduino) : AlertDialog(context), View.OnClickListener {
+class InfoDialog(context: Context, private val arduino: Arduino, private val onDelete: () -> Unit) :
+    AlertDialog(context), View.OnClickListener {
     /** Binding for this activity */
     private val binding by lazy { InfoDialogBinding.inflate(layoutInflater) }
 
@@ -26,8 +27,10 @@ class InfoDialog(context: Context, private val arduino: Arduino) : AlertDialog(c
         setContentView(binding.root)
 
         binding.apply {
-            // Register click listener
+            // Register click listeners
+            deleteDevice.setOnClickListener(this@InfoDialog)
             toggleAlarm.setOnClickListener(this@InfoDialog)
+            testBuzzer.setOnClickListener(this@InfoDialog)
 
             // Update device data
             refresh()
@@ -35,19 +38,34 @@ class InfoDialog(context: Context, private val arduino: Arduino) : AlertDialog(c
     }
 
     override fun onClick(v: View) {
-        // Check if the button clicked is actually the toggle alarm button
-        if (v.id != binding.toggleAlarm.id) return
+        // Check which button was pressed
+        when (v.id) {
+            binding.deleteDevice.id -> {
+                // Call onDelete and dismiss dialog
+                onDelete()
+                dismiss()
+            }
 
-        // Send request to buzzer toggle endpoint and update device data
-        Connection.request(arduino, "?code=${arduino.code}&buzzer") {
-            // Update arduino data
-            arduino.dth = it.dth
-            arduino.alarm = it.alarm == 1
+            binding.toggleAlarm.id -> {
+                // Send request to turn arm alarm and update device data
+                Connection.request(arduino, "?code=${arduino.code}&led") {
+                    // Update arduino data
+                    arduino.last = it
 
-            binding.apply {
-                // Update device data
-                refresh()
-                setView(root)
+                    // Update device data
+                    refresh()
+                }
+            }
+
+            binding.testBuzzer.id -> {
+                // Send request to buzzer toggle endpoint and update device data
+                Connection.request(arduino, "?code=${arduino.code}&buzzer") {
+                    // Update arduino data
+                    arduino.last = it
+
+                    // Update device data
+                    refresh()
+                }
             }
         }
     }
@@ -60,15 +78,23 @@ class InfoDialog(context: Context, private val arduino: Arduino) : AlertDialog(c
             @SuppressLint("SetTextI18n")
             address.text = "${arduino.ip}:${arduino.port}"
 
+            // DTH instance received from the Arduino
+            val dth = arduino.last?.dth
+
             // Check if DTH sensor is ready to update
-            if (arduino.dth?.ready == 1) {
-                humidity.text = arduino.dth?.humidity.toString()
-                temp.text = arduino.dth?.temperature.toString()
+            if (dth?.ready == 1) {
+                // Set DTH fields
+                temperature.text = dth.temperature.toString() + " °C"
+                humidity.text = dth.humidity.toString()
             }
 
-            // Set alarm status
-            val id = if (arduino.alarm == true) R.string.alarm_on else R.string.alarm_off
-            alarm.text = context.getString(id)
+            // Set light value
+            val unset = context.getString(R.string.not_set)
+            light.text = arduino.last?.light?.toString() ?: unset
+
+            // Set button text
+            testBuzzer.text = if (arduino.last?.buzzerStatus == 1) "Disable buzzer" else "Enable buzzer"
+            toggleAlarm.text = if (arduino.last?.alarmStatus == 1) "Disable alarm" else "Enable alarm"
         }
     }
 }

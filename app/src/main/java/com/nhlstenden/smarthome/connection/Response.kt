@@ -9,4 +9,9 @@ import com.nhlstenden.smarthome.utils.Arduino
  * @author Robert
  * @since 1.0
  */
-data class Response(val dth: DTH, @SerializedName("buzzer") val alarm: Int)
+data class Response(
+    val dth: DTH,
+    val light: Int,
+    @SerializedName("led") val alarmStatus: Int,
+    @SerializedName("buzzer") val buzzerStatus: Int
+)

@@ -19,6 +19,7 @@ import com.nhlstenden.smarthome.databinding.ActivityMainBinding
 import com.nhlstenden.smarthome.dialog.AddArduinoDialog
 import com.nhlstenden.smarthome.dialog.InfoDialog
 import com.nhlstenden.smarthome.utils.Arduino
+import com.nhlstenden.smarthome.utils.VIBRATE
 
 /**
  * Smarthome app main activity
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         setSupportActionBar(binding.toolbar)
 
         // Request required permissions
-        requestPermissions(arrayOf(INTERNET), 0)
+        requestPermissions(arrayOf(INTERNET, VIBRATE), 0)
     }
 
     override fun onRequestPermissionsResult(
@@ -94,7 +95,13 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         // Create buttons for all arduino's
         val button = Button(this).apply {
             setOnClickListener {
-                val infoDialog = InfoDialog(this@MainActivity, device)
+                val infoDialog = InfoDialog(this@MainActivity, device) {
+                    // Remove button view and delete device
+                    binding.layout.removeView(this)
+                    service?.remove(device)
+                }
+
+                // Show dialog
                 infoDialog.show()
             }
 

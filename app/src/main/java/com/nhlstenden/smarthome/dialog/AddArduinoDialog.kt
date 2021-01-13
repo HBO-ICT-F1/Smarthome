@@ -67,7 +67,7 @@ class AddArduinoDialog(
             if (response.code == 0) return@thread onError(context.getString(R.string.pair_failed))
 
             // Create arduino instance
-            val arduino = Arduino(name, ip, port, response.code, null, null)
+            val arduino = Arduino(name, ip, port, response.code, null)
 
             // Insert data into database, call onSuccess and dismiss
             smarthome.add(arduino)
