@@ -40,7 +40,7 @@ class Database(private val database: SQLiteDatabase) {
      */
     fun exec(query: String, callback: (Cursor) -> Unit): Boolean {
         database.rawQuery(query, null).use {
-            return if (it.moveToFirst()) {
+            return if (it.count != 0 && it.moveToFirst()) {
                 callback(it)
                 true
             } else {

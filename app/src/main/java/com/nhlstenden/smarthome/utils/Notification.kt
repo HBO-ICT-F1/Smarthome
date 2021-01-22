@@ -45,8 +45,8 @@ class Notification(
     fun notify(
         title: String,
         text: String,
-        priority: Int = NotificationCompat.PRIORITY_DEFAULT,
         category: String,
+        priority: Int = NotificationCompat.PRIORITY_DEFAULT,
         vibrationPattern: LongArray = longArrayOf()
     ) {
         val id = id++
